@@ -4,11 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>fire data pack</title>
-
-    <!-- 网站图标 (外部 SVG) -->
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
+        /* ===== 全局重置 & 基础样式 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -39,6 +38,7 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
+        /* ===== 标题 ===== */
         .main-title {
             text-align: center;
             font-size: clamp(2.8rem, 10vw, 4.2rem);
@@ -72,6 +72,7 @@
             opacity: 0.6;
         }
 
+        /* ===== 项目卡片 ===== */
         .project-card {
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(16px);
@@ -167,6 +168,7 @@
             background: linear-gradient(90deg, transparent, rgba(255, 140, 40, 0.12), transparent);
         }
 
+        /* ===== 下载按钮（触发弹窗） ===== */
         .download-area {
             display: flex;
             align-items: center;
@@ -243,6 +245,178 @@
             display: block;
         }
 
+        /* ===== 版本选择模态框 ===== */
+        .modal-overlay {
+            display: none; /* 默认隐藏 */
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        .modal-box {
+            background: rgba(20, 14, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 140, 40, 0.2);
+            border-radius: 28px;
+            padding: 32px 30px 28px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f0e6d8;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+
+        .modal-title .title-emoji {
+            color: #ff7a00;
+            margin-right: 6px;
+        }
+
+        .version-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+
+        .version-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .version-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+
+        .version-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 140, 40, 0.3);
+            border-radius: 10px;
+        }
+
+        .version-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .version-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 140, 40, 0.15);
+        }
+
+        .version-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .version-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+
+        .version-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .version-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e8ddd0;
+            letter-spacing: 0.01em;
+        }
+
+        .version-download {
+            width: 32px;
+            height: 32px;
+            padding: 4px;
+            border-radius: 50%;
+            background: rgba(255, 120, 20, 0.12);
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .version-download:hover {
+            background: rgba(255, 120, 20, 0.25);
+            transform: scale(1.08);
+        }
+
+        .version-download:active {
+            transform: scale(0.92);
+        }
+
+        .version-download img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .modal-close {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            color: #b8a89a;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f0e6d8;
+        }
+
+        /* ===== 底部 ===== */
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -251,23 +425,28 @@
             letter-spacing: 0.06em;
         }
 
+        /* ===== 响应式 ===== */
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
             .project-name { font-size: 1.25rem; }
             .download-area { flex-direction: column; align-items: stretch; }
             .download-btn { width: 100%; justify-content: center; }
             .download-info { justify-content: center; }
+            .modal-box { padding: 24px 18px; }
+            .version-item { padding: 10px 12px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- 标题 -->
         <h1 class="main-title">
             <img src="assets/main/textures/fire.svg" alt="Fire" class="title-icon" />
             <span>fire data pack</span>
         </h1>
         <div class="title-underline"></div>
 
+        <!-- 项目卡片 -->
         <div class="project-card">
             <div class="project-header">
                 <div class="project-icon">
@@ -287,6 +466,7 @@
 
             <div class="divider"></div>
 
+            <!-- 下载区域（按钮触发弹窗） -->
             <div class="download-area">
                 <div class="download-info">
                     <span class="info-icon">
@@ -295,12 +475,12 @@
                     <span>Data Pack</span>
                     <span class="file-size">~1.2 MB</span>
                 </div>
-                <a href="assets/main/download_src/neovillage.zip" download="neovillage.zip" class="download-btn">
+                <button class="download-btn" id="openModalBtn">
                     <span class="btn-icon">
                         <img src="assets/main/textures/download.svg" alt="Download" />
                     </span>
                     Download
-                </a>
+                </button>
             </div>
         </div>
 
@@ -308,5 +488,119 @@
             <span>✦  Made with 🔥  ·  MC Data Pack  ✦</span>
         </div>
     </div>
+
+    <!-- ===== 版本选择模态框 ===== -->
+    <div class="modal-overlay" id="versionModal">
+        <div class="modal-box">
+            <div class="modal-title">
+                <span class="title-emoji">📦</span> Select Version
+            </div>
+            <div class="version-list" id="versionList">
+                <!-- 由 JavaScript 动态生成 -->
+            </div>
+            <button class="modal-close" id="closeModalBtn">Close</button>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            'use strict';
+
+            // ---------- 版本数据 ----------
+            // 按版本号从高到低排列（版本号越高，排位越高）
+            const versions = [
+                { version: '1.21.11', file: 'neovillage-1.21.11.zip' },
+                { version: '1.20.1',  file: 'neovillage-1.20.1.zip' }
+            ];
+
+            // 图标路径（复用已有的 SVG）
+            const ICON_VERSION = 'assets/main/textures/version.svg';
+            const ICON_DOWNLOAD = 'assets/main/textures/download.svg';
+
+            // ---------- DOM 引用 ----------
+            const modalOverlay = document.getElementById('versionModal');
+            const versionList = document.getElementById('versionList');
+            const openBtn = document.getElementById('openModalBtn');
+            const closeBtn = document.getElementById('closeModalBtn');
+
+            // ---------- 渲染版本列表 ----------
+            function renderVersions() {
+                versionList.innerHTML = '';
+                versions.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'version-item';
+
+                    // 左：版本图标 + 版本号
+                    const left = document.createElement('div');
+                    left.className = 'version-left';
+                    left.innerHTML = `
+                        <span class="version-icon">
+                            <img src="${ICON_VERSION}" alt="Version" />
+                        </span>
+                        <span class="version-number">${item.version}</span>
+                    `;
+
+                    // 右：下载按钮
+                    const dlBtn = document.createElement('button');
+                    dlBtn.className = 'version-download';
+                    dlBtn.setAttribute('aria-label', `Download version ${item.version}`);
+                    dlBtn.innerHTML = `<img src="${ICON_DOWNLOAD}" alt="Download" />`;
+                    dlBtn.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        // 构造下载 URL（假设所有版本文件放在 assets/main/download_src/ 下）
+                        const url = `assets/main/download_src/${item.file}`;
+                        const a = document.createElement('a');
+                        a.href = url;
+                        a.download = item.file;
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        // 下载后不关闭弹窗，让用户自己关闭
+                    });
+
+                    div.appendChild(left);
+                    div.appendChild(dlBtn);
+                    versionList.appendChild(div);
+                });
+            }
+
+            // ---------- 模态框控制 ----------
+            function openModal() {
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden'; // 防止滚动
+            }
+
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            // 点击遮罩关闭
+            modalOverlay.addEventListener('click', function(e) {
+                if (e.target === modalOverlay) {
+                    closeModal();
+                }
+            });
+
+            // 按钮事件
+            openBtn.addEventListener('click', openModal);
+            closeBtn.addEventListener('click', closeModal);
+
+            // 键盘 ESC 关闭
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+                    closeModal();
+                }
+            });
+
+            // ---------- 启动 ----------
+            renderVersions();
+
+            // 控制台提示
+            console.log('🔥 fire data pack — 版本选择已加载');
+            console.log('📦 版本列表:', versions.map(v => v.version).join(', '));
+        })();
+    </script>
+
 </body>
 </html>
