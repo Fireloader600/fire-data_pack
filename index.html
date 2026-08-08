@@ -7,6 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
+        /* ===== 完整样式（与之前一致） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -480,7 +481,7 @@
         (function() {
             'use strict';
 
-            // ----- 数据包文件名列表（新增时在此添加） -----
+            // ----- 数据包文件名列表 -----
             const PACK_JSON_FILES = [
                 'neovillage.json',
                 'structure_optimization.json'
@@ -495,7 +496,6 @@
             const ICON_PIN = 'assets/main/textures/pin.svg';
             const ICON_CLIP = 'assets/main/textures/clip.svg';
 
-            // ----- DOM -----
             const packsGrid = document.getElementById('packsGrid');
             const modalOverlay = document.getElementById('versionModal');
             const versionList = document.getElementById('versionList');
@@ -580,10 +580,10 @@
             }
 
             async function loadAllPacks() {
-                let hasAny = false;
+                // 不再显示任何空状态文本
                 for (const fileName of PACK_JSON_FILES) {
                     const pack = await loadPack(fileName);
-                    if (!pack || pack.available.length === 0) continue; // 无文件则跳过
+                    if (!pack || pack.available.length === 0) continue;
 
                     const card = document.createElement('div');
                     card.className = 'project-card';
@@ -620,14 +620,8 @@
                     btn.addEventListener('click', function(e) { e.preventDefault(); openModal(pack); });
                     card.classList.add('visible');
                     packsGrid.appendChild(card);
-                    hasAny = true;
                 }
-                if (!hasAny) {
-                    const emptyMsg = document.createElement('div');
-                    emptyMsg.style.cssText = 'text-align:center;color:rgba(255,200,160,0.15);padding:40px 20px;font-size:0.9rem;letter-spacing:0.04em;';
-                    emptyMsg.textContent = 'No data packs found.';
-                    packsGrid.appendChild(emptyMsg);
-                }
+                // 没有数据包时，页面将只显示标题和页脚（无额外文本）
             }
 
             loadAllPacks();
