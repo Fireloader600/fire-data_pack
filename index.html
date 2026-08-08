@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* ===== 完整样式（与之前完全一致） ===== */
+        /* ===== 全局样式 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -442,23 +442,6 @@
             letter-spacing: 0.06em;
         }
 
-        .empty-state {
-            text-align: center;
-            padding: 16px 0 8px 0;
-            color: #b8a89a;
-            font-size: 0.95rem;
-            letter-spacing: 0.02em;
-        }
-        .empty-state .empty-icon {
-            font-size: 2rem;
-            display: block;
-            margin-bottom: 12px;
-            opacity: 0.4;
-        }
-        .empty-state .empty-text {
-            color: #8a7a6a;
-        }
-
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
             .project-name { font-size: 1.25rem; }
@@ -481,7 +464,7 @@
         <div class="title-underline"></div>
 
         <div class="packs-grid" id="packsGrid">
-            <!-- 卡片由 JS 生成 -->
+            <!-- 卡片由 JavaScript 动态生成 -->
         </div>
 
         <div class="footer">
@@ -508,6 +491,7 @@
                 'structure_optimization.json'
             ];
 
+            // ===== 路径配置 =====
             const JSON_BASE = 'data/main/file/';
             const DOWNLOAD_BASE = 'assets/main/download_src/';
             const ICON_VERSION = 'assets/main/textures/version.svg';
@@ -516,20 +500,20 @@
             const ICON_PIN = 'assets/main/textures/pin.svg';
             const ICON_CLIP = 'assets/main/textures/clip.svg';
 
+            // ===== DOM 引用 =====
             const packsGrid = document.getElementById('packsGrid');
             const modalOverlay = document.getElementById('versionModal');
             const versionList = document.getElementById('versionList');
             const closeModalBtn = document.getElementById('closeModalBtn');
 
-            let currentModalData = null;
-
+            // ===== 辅助函数 =====
             function getVersionType(v) {
                 const map = { 1:'Alpha', 2:'Beta', 3:'Stable Beta', 4:'Official' };
                 return map[v] || 'Unknown';
             }
 
+            // ===== 模态框控制 =====
             function openModal(packData) {
-                currentModalData = packData;
                 versionList.innerHTML = '';
                 const availableVersions = packData._availableVersions || [];
                 if (availableVersions.length === 0) {
@@ -572,9 +556,9 @@
             function closeModal() {
                 modalOverlay.classList.remove('active');
                 document.body.style.overflow = '';
-                currentModalData = null;
             }
 
+            // 模态框事件（只绑定一次）
             if (!window._modalBound) {
                 closeModalBtn.addEventListener('click', closeModal);
                 modalOverlay.addEventListener('click', function(e) {
@@ -586,6 +570,7 @@
                 window._modalBound = true;
             }
 
+            // ===== 加载单个数据包 =====
             async function loadPack(jsonFileName) {
                 const jsonUrl = JSON_BASE + jsonFileName;
                 try {
@@ -598,11 +583,12 @@
                     const name = data.name || 'unknown.zip';
                     const versionType = getVersionType(data.version);
                     const note = data.note || '';
-                    const verlevel = data.verlevel;   // 保留原始值（整数或小数）
+                    const verlevel = data.verlevel;
                     const fileMap = data.file || {};
                     const minecraftVersions = data.minecraft || [];
                     const isExperimental = data.experimental === true;
 
+                    // 构建可用版本列表（不检测文件是否存在）
                     const available = [];
                     for (const mcVer of minecraftVersions) {
                         const fileName = fileMap[mcVer];
@@ -626,6 +612,7 @@
                 }
             }
 
+            // ===== 渲染所有卡片 =====
             async function loadAllPacks() {
                 let hasAny = false;
 
@@ -635,6 +622,10 @@
 
                     const hasFiles = pack.available.length > 0;
 
+                    // ★ 如果没有文件，直接跳过该卡片，不显示任何内容 ★
+                    if (!hasFiles) continue;
+
+                    // 只有有文件时才创建卡片
                     const card = document.createElement('div');
                     card.className = 'project-card';
 
@@ -657,7 +648,6 @@
                     const noteRow = document.createElement('div');
                     noteRow.className = 'project-note';
                     const expClass = pack.isExperimental ? '' : 'hidden';
-                    // ★★★ 修改点：将 "Level" 改为 "Version" ★★★
                     noteRow.innerHTML = `
                         <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
                         <span class="note-text">${pack.note}</span>
@@ -685,25 +675,9 @@
                     `;
                     normalContent.appendChild(downloadArea);
 
-                    const emptyContent = document.createElement('div');
-                    emptyContent.id = 'emptyContent';
-                    emptyContent.style.display = hasFiles ? 'none' : 'block';
-                    emptyContent.innerHTML = `
-                        <div class="empty-state">
-                            <span class="empty-icon">📂</span>
-                            <span class="empty-text">Looks like the files aren't installed yet...</span>
-                        </div>
-                    `;
-
                     card.appendChild(normalContent);
-                    card.appendChild(emptyContent);
 
-                    if (!hasFiles) {
-                        normalContent.style.display = 'none';
-                    } else {
-                        normalContent.style.display = 'block';
-                    }
-
+                    // 绑定下载按钮事件
                     const downloadBtn = card.querySelector('.download-btn');
                     if (downloadBtn && hasFiles) {
                         pack._availableVersions = pack.available;
@@ -718,6 +692,7 @@
                     hasAny = true;
                 }
 
+                // 如果没有加载到任何数据包
                 if (!hasAny) {
                     const emptyMsg = document.createElement('div');
                     emptyMsg.style.cssText = `
@@ -732,8 +707,9 @@
                 }
             }
 
+            // ===== 启动 =====
             loadAllPacks();
         })();
     </script>
 </body>
-</html>
+</html>0
