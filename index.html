@@ -7,8 +7,418 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* 样式与之前完全一致，因篇幅省略，实际使用请复制完整样式 */
-        /* 我已在之前的回答中给出完整样式，此处不再重复 */
+        /* ===== 全局样式（与之前完全相同，此处省略以节省篇幅） ===== */
+        /* 实际使用时请复制完整样式，或直接从上一轮回答中复制 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: #0b0806;
+            background-image:
+                radial-gradient(ellipse at 30% 20%, rgba(180, 60, 0, 0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(220, 80, 0, 0.15) 0%, transparent 50%);
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 720px;
+            width: 100%;
+            animation: fadeUp 0.8s ease-out both;
+        }
+        @keyframes fadeUp {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .main-title {
+            text-align: center;
+            font-size: clamp(2.8rem, 10vw, 4.2rem);
+            font-weight: 900;
+            letter-spacing: 0.04em;
+            background: linear-gradient(135deg, #ff9a3c, #ff5e00, #ff2a00);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .title-icon {
+            width: 1em;
+            height: 1em;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .title-underline {
+            width: 70px;
+            height: 3px;
+            margin: 12px auto 30px auto;
+            background: linear-gradient(90deg, transparent, #ff6a00, transparent);
+            border-radius: 4px;
+            opacity: 0.6;
+        }
+        .packs-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .project-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.04);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 140, 40, 0.15);
+            border-radius: 24px;
+            padding: 30px 28px 24px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+        .project-card.visible {
+            display: block;
+        }
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+        .project-icon {
+            width: 46px;
+            height: 46px;
+            flex-shrink: 0;
+            background: rgba(255, 120, 20, 0.15);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 140, 40, 0.1);
+            padding: 8px;
+        }
+        .project-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .project-name {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #f0e6d8;
+            letter-spacing: 0.02em;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px 12px;
+        }
+        .badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: rgba(255, 140, 40, 0.15);
+            color: #ffb074;
+            padding: 2px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 140, 40, 0.1);
+            text-transform: uppercase;
+        }
+        .project-note {
+            margin-top: 6px;
+            font-size: 0.95rem;
+            color: #b8a89a;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .note-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+        }
+        .note-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .note-text {
+            background: rgba(255, 200, 100, 0.05);
+            padding: 2px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 200, 100, 0.06);
+            font-size: 0.85rem;
+            color: #d4c0b0;
+        }
+        .version-tag {
+            background: rgba(255, 100, 50, 0.12);
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #ffb074;
+            border: 1px solid rgba(255, 100, 50, 0.1);
+        }
+        .experimental-badge {
+            display: none;
+            background: rgba(255, 40, 40, 0.15);
+            color: #ff6b6b;
+            padding: 2px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border: 1px solid rgba(255, 40, 40, 0.25);
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .experimental-badge.show {
+            display: inline-block;
+        }
+        .divider {
+            margin: 18px 0 22px 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(255, 140, 40, 0.12), transparent);
+        }
+        .download-area {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+        .download-info {
+            font-size: 0.85rem;
+            color: #8a7a6a;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .download-info .info-icon {
+            width: 18px;
+            height: 18px;
+            display: inline-block;
+        }
+        .download-info .info-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .file-size {
+            background: rgba(255, 255, 255, 0.04);
+            padding: 4px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: #9a8a7a;
+        }
+        .download-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 34px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            background: linear-gradient(135deg, #ff7a2a, #f05000);
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            text-decoration: none;
+            box-shadow: 0 6px 24px rgba(255, 80, 0, 0.35);
+            transition: transform 0.2s, box-shadow 0.2s;
+            letter-spacing: 0.03em;
+            flex-shrink: 0;
+        }
+        .download-btn:hover {
+            transform: translateY(-2px) scale(1.02);
+            box-shadow: 0 10px 40px rgba(255, 80, 0, 0.5);
+        }
+        .download-btn:active {
+            transform: scale(0.95);
+        }
+        .download-btn .btn-icon {
+            width: 1.2rem;
+            height: 1.2rem;
+            display: inline-block;
+        }
+        .download-btn .btn-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.25s ease-out;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+        .modal-box {
+            background: rgba(20, 14, 10, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 140, 40, 0.2);
+            border-radius: 28px;
+            padding: 32px 30px 28px;
+            max-width: 480px;
+            width: 100%;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+            transform: scale(0.95);
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .modal-overlay.active .modal-box {
+            transform: scale(1);
+        }
+        .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f0e6d8;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+        .version-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 4px;
+        }
+        .version-list::-webkit-scrollbar {
+            width: 4px;
+        }
+        .version-list::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+        }
+        .version-list::-webkit-scrollbar-thumb {
+            background: rgba(255, 140, 40, 0.3);
+            border-radius: 10px;
+        }
+        .version-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            transition: background 0.2s, border-color 0.2s;
+        }
+        .version-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 140, 40, 0.15);
+        }
+        .version-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .version-icon {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .version-icon img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .version-number {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #e8ddd0;
+            letter-spacing: 0.01em;
+        }
+        .version-download {
+            width: 32px;
+            height: 32px;
+            padding: 4px;
+            border-radius: 50%;
+            background: rgba(255, 120, 20, 0.12);
+            border: none;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .version-download:hover {
+            background: rgba(255, 120, 20, 0.25);
+            transform: scale(1.08);
+        }
+        .version-download:active {
+            transform: scale(0.92);
+        }
+        .version-download img {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        .modal-close {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            color: #b8a89a;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f0e6d8;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: rgba(255, 200, 160, 0.08);
+            letter-spacing: 0.06em;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 16px 0 8px 0;
+            color: #b8a89a;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+        .empty-state .empty-icon { font-size: 2rem; display: block; margin-bottom: 12px; opacity: 0.4; }
+        .empty-state .empty-text { color: #8a7a6a; }
+        @media (max-width: 500px) {
+            .project-card { padding: 20px 18px; }
+            .project-name { font-size: 1.25rem; }
+            .download-area { flex-direction: column; align-items: stretch; }
+            .download-btn { width: 100%; justify-content: center; }
+            .download-info { justify-content: center; }
+            .modal-box { padding: 24px 18px; }
+            .version-item { padding: 10px 12px; }
+            .project-note { gap: 6px; }
+            .experimental-badge { font-size: 0.7rem; padding: 1px 10px; }
+        }
     </style>
 </head>
 <body>
@@ -19,47 +429,8 @@
         </h1>
         <div class="title-underline"></div>
 
-        <div class="project-card" id="projectCard">
-            <div id="normalContent">
-                <div class="project-header">
-                    <div class="project-icon">
-                        <img src="assets/main/textures/package.svg" alt="Package" />
-                    </div>
-                    <div class="project-name">
-                        <span id="projectName">neovillage.zip</span>
-                        <span class="badge" id="versionBadge">Alpha</span>
-                    </div>
-                </div>
-                <div class="project-note">
-                    <span class="note-icon">
-                        <img src="assets/main/textures/pin.svg" alt="Pin" />
-                    </span>
-                    <span class="note-text" id="projectNote">bug fix</span>
-                    <span class="version-tag" id="verlevelTag">等级 3</span>
-                </div>
-                <div class="divider"></div>
-                <div class="download-area">
-                    <div class="download-info">
-                        <span class="info-icon">
-                            <img src="assets/main/textures/clip.svg" alt="Clip" />
-                        </span>
-                        <span>Data Pack</span>
-                        <span class="file-size">~1.2 MB</span>
-                    </div>
-                    <button class="download-btn" id="openModalBtn">
-                        <span class="btn-icon">
-                            <img src="assets/main/textures/download.svg" alt="Download" />
-                        </span>
-                        Download
-                    </button>
-                </div>
-            </div>
-            <div id="emptyContent" style="display:none;">
-                <div class="empty-state">
-                    <span class="empty-icon">📂</span>
-                    <span class="empty-text">Looks like the files aren't installed yet...</span>
-                </div>
-            </div>
+        <div class="packs-grid" id="packsGrid">
+            <!-- 项目卡片由 JavaScript 生成 -->
         </div>
 
         <div class="footer">
@@ -80,85 +451,56 @@
         (function() {
             'use strict';
 
-            // ===== 唯一约定路径 =====
-            const JSON_PATH = 'data/main/file/neovillage.json';
-            const DOWNLOAD_BASE = 'assets/main/download/';
+            // ============================================================
+            // 1. 在此列出所有数据包的 JSON 文件名（不含路径）
+            //    新增数据包时，在这里添加文件名即可
+            // ============================================================
+            const PACK_JSON_FILES = [
+                'neovillage.json',
+                'structure_optimization.json'
+            ];
+
+            // 路径配置（修正下载路径为 download_src）
+            const JSON_BASE = 'data/main/file/';
+            const DOWNLOAD_BASE = 'assets/main/download_src/';   // ← 修正回 download_src
             const ICON_VERSION = 'assets/main/textures/version.svg';
             const ICON_DOWNLOAD = 'assets/main/textures/download.svg';
+            const ICON_PACKAGE = 'assets/main/textures/package.svg';
+            const ICON_PIN = 'assets/main/textures/pin.svg';
+            const ICON_CLIP = 'assets/main/textures/clip.svg';
 
-            // DOM 引用
-            const projectCard = document.getElementById('projectCard');
-            const normalContent = document.getElementById('normalContent');
-            const emptyContent = document.getElementById('emptyContent');
-            const projectName = document.getElementById('projectName');
-            const versionBadge = document.getElementById('versionBadge');
-            const projectNote = document.getElementById('projectNote');
-            const verlevelTag = document.getElementById('verlevelTag');
-            const versionList = document.getElementById('versionList');
-            const openModalBtn = document.getElementById('openModalBtn');
-            const closeModalBtn = document.getElementById('closeModalBtn');
+            // DOM
+            const packsGrid = document.getElementById('packsGrid');
             const modalOverlay = document.getElementById('versionModal');
+            const versionList = document.getElementById('versionList');
+            const closeModalBtn = document.getElementById('closeModalBtn');
 
+            let currentModalData = null;
+
+            // 辅助函数
             function getVersionType(v) {
                 const map = { 1:'Alpha', 2:'Beta', 3:'Stable Beta', 4:'Official' };
                 return map[v] || 'Unknown';
             }
 
             function fileExists(url) {
-                return fetch(url, { method: 'HEAD' }).then(r => r.ok).catch(() => false);
+                return fetch(url, { method: 'HEAD' })
+                    .then(r => r.ok)
+                    .catch(() => false);
             }
 
-            function openModal() { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
-            function closeModal() { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
-
-            async function init() {
-                try {
-                    const res = await fetch(JSON_PATH);
-                    if (!res.ok) return; // 静默失败，页面保持隐藏
-                    const data = await res.json();
-
-                    if (data.check_code !== 1 && data.check_code !== 48) return;
-
-                    const name = data.name || 'neovillage.zip';
-                    const versionType = getVersionType(data.version);
-                    const note = data.note || '';
-                    const verlevel = data.verlevel || 0;
-                    const fileMap = data.file || {};
-                    const minecraftVersions = data.minecraft || [];
-
-                    // 检测文件
-                    const available = [];
-                    for (const mcVer of minecraftVersions) {
-                        const fileName = fileMap[mcVer];
-                        if (fileName) {
-                            const fullUrl = DOWNLOAD_BASE + fileName + '.zip';
-                            if (await fileExists(fullUrl)) {
-                                available.push({ version: mcVer, file: fileName + '.zip' });
-                            }
-                        }
-                    }
-
-                    available.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
-
-                    // 更新界面
-                    projectName.textContent = name;
-                    versionBadge.textContent = versionType;
-                    projectNote.textContent = note;
-                    verlevelTag.textContent = `等级 ${verlevel}`;
-
-                    if (available.length === 0) {
-                        normalContent.style.display = 'none';
-                        emptyContent.style.display = 'block';
-                        projectCard.classList.add('visible');
-                        return;
-                    }
-
-                    normalContent.style.display = 'block';
-                    emptyContent.style.display = 'none';
-                    projectCard.classList.add('visible');
-
-                    versionList.innerHTML = '';
-                    available.forEach(item => {
+            function openModal(packData) {
+                currentModalData = packData;
+                versionList.innerHTML = '';
+                const availableVersions = packData._availableVersions || [];
+                if (availableVersions.length === 0) {
+                    versionList.innerHTML = `
+                        <div style="text-align:center;color:#8a7a6a;padding:20px 0;">
+                            No versions available
+                        </div>
+                    `;
+                } else {
+                    availableVersions.forEach(item => {
                         const div = document.createElement('div');
                         div.className = 'version-item';
                         div.innerHTML = `
@@ -173,8 +515,9 @@
                         const dlBtn = div.querySelector('.version-download');
                         dlBtn.addEventListener('click', function(e) {
                             e.stopPropagation();
+                            const url = DOWNLOAD_BASE + item.file;
                             const a = document.createElement('a');
-                            a.href = DOWNLOAD_BASE + item.file;
+                            a.href = url;
                             a.download = item.file;
                             document.body.appendChild(a);
                             a.click();
@@ -182,26 +525,179 @@
                         });
                         versionList.appendChild(div);
                     });
+                }
+                modalOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
 
-                    // 模态框事件（只绑定一次）
-                    if (!window._modalBound) {
-                        openModalBtn.addEventListener('click', openModal);
-                        closeModalBtn.addEventListener('click', closeModal);
-                        modalOverlay.addEventListener('click', function(e) {
-                            if (e.target === modalOverlay) closeModal();
-                        });
-                        document.addEventListener('keydown', function(e) {
-                            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
-                        });
-                        window._modalBound = true;
+            function closeModal() {
+                modalOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+                currentModalData = null;
+            }
+
+            // 模态框事件（只绑定一次）
+            if (!window._modalBound) {
+                closeModalBtn.addEventListener('click', closeModal);
+                modalOverlay.addEventListener('click', function(e) {
+                    if (e.target === modalOverlay) closeModal();
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+                });
+                window._modalBound = true;
+            }
+
+            // 加载单个数据包
+            async function loadPack(jsonFileName) {
+                const jsonUrl = JSON_BASE + jsonFileName;
+                try {
+                    const res = await fetch(jsonUrl);
+                    if (!res.ok) return null;
+                    const data = await res.json();
+
+                    if (data.check_code !== 1 && data.check_code !== 48) return null;
+
+                    const name = data.name || 'unknown.zip';
+                    const versionType = getVersionType(data.version);
+                    const note = data.note || '';
+                    const verlevel = data.verlevel || 0;
+                    const fileMap = data.file || {};
+                    const minecraftVersions = data.minecraft || [];
+                    const isExperimental = data.experimental === true;
+
+                    const available = [];
+                    for (const mcVer of minecraftVersions) {
+                        const fileName = fileMap[mcVer];
+                        if (fileName) {
+                            const fullUrl = DOWNLOAD_BASE + fileName + '.zip';
+                            if (await fileExists(fullUrl)) {
+                                available.push({ version: mcVer, file: fileName + '.zip' });
+                            }
+                        }
                     }
+                    available.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
 
+                    return {
+                        name,
+                        versionType,
+                        note,
+                        verlevel,
+                        isExperimental,
+                        available,
+                        raw: data
+                    };
                 } catch (e) {
-                    // 任何错误都不显示页面内容
+                    return null;
                 }
             }
 
-            init();
+            // 渲染所有数据包
+            async function loadAllPacks() {
+                let hasAnyVisible = false;
+
+                for (const fileName of PACK_JSON_FILES) {
+                    const pack = await loadPack(fileName);
+                    if (!pack) continue;
+
+                    const hasFiles = pack.available.length > 0;
+
+                    const card = document.createElement('div');
+                    card.className = 'project-card visible';
+
+                    const normalContent = document.createElement('div');
+                    normalContent.id = 'normalContent';
+
+                    const header = document.createElement('div');
+                    header.className = 'project-header';
+                    header.innerHTML = `
+                        <div class="project-icon">
+                            <img src="${ICON_PACKAGE}" alt="Package" />
+                        </div>
+                        <div class="project-name">
+                            <span>${pack.name}</span>
+                            <span class="badge">${pack.versionType}</span>
+                        </div>
+                    `;
+                    normalContent.appendChild(header);
+
+                    const noteRow = document.createElement('div');
+                    noteRow.className = 'project-note';
+                    noteRow.innerHTML = `
+                        <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
+                        <span class="note-text">${pack.note}</span>
+                        <span class="version-tag">等级 ${pack.verlevel}</span>
+                        <span class="experimental-badge ${pack.isExperimental ? 'show' : ''}">Experimental</span>
+                    `;
+                    normalContent.appendChild(noteRow);
+
+                    const divider = document.createElement('div');
+                    divider.className = 'divider';
+                    normalContent.appendChild(divider);
+
+                    const downloadArea = document.createElement('div');
+                    downloadArea.className = 'download-area';
+                    downloadArea.innerHTML = `
+                        <div class="download-info">
+                            <span class="info-icon"><img src="${ICON_CLIP}" alt="Clip" /></span>
+                            <span>Data Pack</span>
+                            <span class="file-size">~1.2 MB</span>
+                        </div>
+                        <button class="download-btn" data-pack-name="${pack.name}">
+                            <span class="btn-icon"><img src="${ICON_DOWNLOAD}" alt="Download" /></span>
+                            Download
+                        </button>
+                    `;
+                    normalContent.appendChild(downloadArea);
+
+                    const emptyContent = document.createElement('div');
+                    emptyContent.id = 'emptyContent';
+                    emptyContent.style.display = hasFiles ? 'none' : 'block';
+                    emptyContent.innerHTML = `
+                        <div class="empty-state">
+                            <span class="empty-icon">📂</span>
+                            <span class="empty-text">Looks like the files aren't installed yet...</span>
+                        </div>
+                    `;
+
+                    card.appendChild(normalContent);
+                    card.appendChild(emptyContent);
+
+                    if (!hasFiles) {
+                        normalContent.style.display = 'none';
+                    } else {
+                        normalContent.style.display = 'block';
+                    }
+
+                    const downloadBtn = card.querySelector('.download-btn');
+                    if (downloadBtn && hasFiles) {
+                        pack._availableVersions = pack.available;
+                        downloadBtn.addEventListener('click', function(e) {
+                            e.preventDefault();
+                            openModal(pack);
+                        });
+                    }
+
+                    packsGrid.appendChild(card);
+                    hasAnyVisible = true;
+                }
+
+                if (!hasAnyVisible) {
+                    const emptyMsg = document.createElement('div');
+                    emptyMsg.style.cssText = `
+                        text-align: center;
+                        color: rgba(255, 200, 160, 0.15);
+                        padding: 40px 20px;
+                        font-size: 0.9rem;
+                        letter-spacing: 0.04em;
+                    `;
+                    emptyMsg.textContent = 'No data packs found.';
+                    packsGrid.appendChild(emptyMsg);
+                }
+            }
+
+            loadAllPacks();
+            console.log('🔥 fire data pack — 数据包列表:', PACK_JSON_FILES.join(', '));
         })();
     </script>
 </body>
