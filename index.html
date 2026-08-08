@@ -7,13 +7,13 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* ===== 全局样式（与之前完全相同，此处省略以节省篇幅） ===== */
-        /* 实际使用时请复制完整样式，或直接从上一轮回答中复制 */
+        /* ===== 全局重置 & 背景 ===== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             min-height: 100vh;
             display: flex;
@@ -21,26 +21,35 @@
             align-items: flex-start;
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: #0b0806;
+            /* 丰富的径向渐变背景（带流动感） */
             background-image:
-                radial-gradient(ellipse at 30% 20%, rgba(180, 60, 0, 0.25) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(220, 80, 0, 0.15) 0%, transparent 50%);
+                radial-gradient(ellipse at 30% 20%, rgba(180, 60, 0, 0.3) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(220, 80, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(140, 40, 0, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
             padding: 40px 20px;
         }
+
         .container {
             max-width: 720px;
             width: 100%;
             animation: fadeUp 0.8s ease-out both;
         }
+
+        /* 容器淡入上移动画 */
         @keyframes fadeUp {
-            0% { opacity: 0; transform: translateY(20px); }
+            0% { opacity: 0; transform: translateY(25px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+
+        /* ===== 标题（带流光动画） ===== */
         .main-title {
             text-align: center;
             font-size: clamp(2.8rem, 10vw, 4.2rem);
             font-weight: 900;
             letter-spacing: 0.04em;
-            background: linear-gradient(135deg, #ff9a3c, #ff5e00, #ff2a00);
+            background: linear-gradient(135deg, #ff9a3c, #ff5e00, #ff2a00, #ff7a00);
+            background-size: 200% 200%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -50,13 +59,22 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            animation: shimmerTitle 5s ease-in-out infinite alternate;
         }
+
+        @keyframes shimmerTitle {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
         .title-icon {
             width: 1em;
             height: 1em;
             display: inline-block;
             flex-shrink: 0;
+            -webkit-text-fill-color: initial; /* 确保图标不受文字渐变影响 */
         }
+
         .title-underline {
             width: 70px;
             height: 3px;
@@ -65,11 +83,14 @@
             border-radius: 4px;
             opacity: 0.6;
         }
+
+        /* ===== 数据包卡片列表 ===== */
         .packs-grid {
             display: flex;
             flex-direction: column;
             gap: 30px;
         }
+
         .project-card {
             display: none;
             background: rgba(255, 255, 255, 0.04);
@@ -79,10 +100,21 @@
             border-radius: 24px;
             padding: 30px 28px 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.4s ease,
+                        border-color 0.4s ease;
         }
+
         .project-card.visible {
             display: block;
         }
+
+        .project-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7), 0 0 40px rgba(255, 100, 0, 0.06);
+            border-color: rgba(255, 150, 50, 0.30);
+        }
+
         .project-header {
             display: flex;
             align-items: center;
@@ -90,6 +122,7 @@
             margin-bottom: 4px;
             flex-wrap: wrap;
         }
+
         .project-icon {
             width: 46px;
             height: 46px;
@@ -102,11 +135,13 @@
             border: 1px solid rgba(255, 140, 40, 0.1);
             padding: 8px;
         }
+
         .project-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .project-name {
             font-size: 1.6rem;
             font-weight: 700;
@@ -117,6 +152,7 @@
             flex-wrap: wrap;
             gap: 8px 12px;
         }
+
         .badge {
             font-size: 0.65rem;
             font-weight: 600;
@@ -127,6 +163,7 @@
             border: 1px solid rgba(255, 140, 40, 0.1);
             text-transform: uppercase;
         }
+
         .project-note {
             margin-top: 6px;
             font-size: 0.95rem;
@@ -136,16 +173,19 @@
             gap: 8px;
             flex-wrap: wrap;
         }
+
         .note-icon {
             width: 18px;
             height: 18px;
             display: inline-block;
         }
+
         .note-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .note-text {
             background: rgba(255, 200, 100, 0.05);
             padding: 2px 14px;
@@ -154,6 +194,7 @@
             font-size: 0.85rem;
             color: #d4c0b0;
         }
+
         .version-tag {
             background: rgba(255, 100, 50, 0.12);
             padding: 2px 12px;
@@ -162,6 +203,8 @@
             color: #ffb074;
             border: 1px solid rgba(255, 100, 50, 0.1);
         }
+
+        /* ===== 实验性红色框 ===== */
         .experimental-badge {
             display: none;
             background: rgba(255, 40, 40, 0.15);
@@ -175,14 +218,18 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
+
         .experimental-badge.show {
             display: inline-block;
         }
+
         .divider {
             margin: 18px 0 22px 0;
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255, 140, 40, 0.12), transparent);
         }
+
+        /* ===== 下载区域 ===== */
         .download-area {
             display: flex;
             align-items: center;
@@ -190,6 +237,7 @@
             flex-wrap: wrap;
             gap: 16px;
         }
+
         .download-info {
             font-size: 0.85rem;
             color: #8a7a6a;
@@ -197,16 +245,19 @@
             align-items: center;
             gap: 12px;
         }
+
         .download-info .info-icon {
             width: 18px;
             height: 18px;
             display: inline-block;
         }
+
         .download-info .info-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .file-size {
             background: rgba(255, 255, 255, 0.04);
             padding: 4px 14px;
@@ -214,6 +265,7 @@
             font-size: 0.75rem;
             color: #9a8a7a;
         }
+
         .download-btn {
             display: inline-flex;
             align-items: center;
@@ -228,27 +280,36 @@
             cursor: pointer;
             text-decoration: none;
             box-shadow: 0 6px 24px rgba(255, 80, 0, 0.35);
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+                        box-shadow 0.3s ease,
+                        background 0.3s ease;
             letter-spacing: 0.03em;
             flex-shrink: 0;
         }
+
         .download-btn:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 10px 40px rgba(255, 80, 0, 0.5);
+            background: linear-gradient(135deg, #ff8a3a, #f05a00);
         }
+
         .download-btn:active {
             transform: scale(0.95);
         }
+
         .download-btn .btn-icon {
             width: 1.2rem;
             height: 1.2rem;
             display: inline-block;
         }
+
         .download-btn .btn-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
+        /* ===== 模态框 ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -262,13 +323,16 @@
             padding: 20px;
             animation: fadeIn 0.25s ease-out;
         }
+
         .modal-overlay.active {
             display: flex;
         }
+
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
+
         .modal-box {
             background: rgba(20, 14, 10, 0.95);
             backdrop-filter: blur(20px);
@@ -282,9 +346,11 @@
             transform: scale(0.95);
             transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
+
         .modal-overlay.active .modal-box {
             transform: scale(1);
         }
+
         .modal-title {
             font-size: 1.4rem;
             font-weight: 700;
@@ -293,6 +359,7 @@
             margin-bottom: 20px;
             letter-spacing: 0.02em;
         }
+
         .version-list {
             display: flex;
             flex-direction: column;
@@ -302,6 +369,7 @@
             overflow-y: auto;
             padding-right: 4px;
         }
+
         .version-list::-webkit-scrollbar {
             width: 4px;
         }
@@ -313,6 +381,7 @@
             background: rgba(255, 140, 40, 0.3);
             border-radius: 10px;
         }
+
         .version-item {
             display: flex;
             align-items: center;
@@ -323,31 +392,37 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             transition: background 0.2s, border-color 0.2s;
         }
+
         .version-item:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 140, 40, 0.15);
         }
+
         .version-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .version-icon {
             width: 28px;
             height: 28px;
             flex-shrink: 0;
         }
+
         .version-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .version-number {
             font-size: 1rem;
             font-weight: 600;
             color: #e8ddd0;
             letter-spacing: 0.01em;
         }
+
         .version-download {
             width: 32px;
             height: 32px;
@@ -361,18 +436,22 @@
             align-items: center;
             justify-content: center;
         }
+
         .version-download:hover {
             background: rgba(255, 120, 20, 0.25);
             transform: scale(1.08);
         }
+
         .version-download:active {
             transform: scale(0.92);
         }
+
         .version-download img {
             width: 100%;
             height: 100%;
             display: block;
         }
+
         .modal-close {
             display: block;
             width: 100%;
@@ -388,10 +467,12 @@
             text-align: center;
             letter-spacing: 0.02em;
         }
+
         .modal-close:hover {
             background: rgba(255, 255, 255, 0.08);
             color: #f0e6d8;
         }
+
         .footer {
             margin-top: 40px;
             text-align: center;
@@ -399,6 +480,7 @@
             color: rgba(255, 200, 160, 0.08);
             letter-spacing: 0.06em;
         }
+
         .empty-state {
             text-align: center;
             padding: 16px 0 8px 0;
@@ -408,6 +490,7 @@
         }
         .empty-state .empty-icon { font-size: 2rem; display: block; margin-bottom: 12px; opacity: 0.4; }
         .empty-state .empty-text { color: #8a7a6a; }
+
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
             .project-name { font-size: 1.25rem; }
@@ -430,7 +513,7 @@
         <div class="title-underline"></div>
 
         <div class="packs-grid" id="packsGrid">
-            <!-- 项目卡片由 JavaScript 生成 -->
+            <!-- 项目卡片由 JavaScript 动态生成 -->
         </div>
 
         <div class="footer">
@@ -460,9 +543,9 @@
                 'structure_optimization.json'
             ];
 
-            // 路径配置（修正下载路径为 download_src）
+            // 路径配置
             const JSON_BASE = 'data/main/file/';
-            const DOWNLOAD_BASE = 'assets/main/download_src/';   // ← 修正回 download_src
+            const DOWNLOAD_BASE = 'assets/main/download_src/';
             const ICON_VERSION = 'assets/main/textures/version.svg';
             const ICON_DOWNLOAD = 'assets/main/textures/download.svg';
             const ICON_PACKAGE = 'assets/main/textures/package.svg';
