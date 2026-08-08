@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fire data pack</title>
+    <title>fire</title>
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
     <style>
+        /* ===== 完整样式（与上一版完全相同） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -34,9 +35,16 @@
             0% { opacity: 0; transform: translateY(25px); }
             100% { opacity: 1; transform: translateY(0); }
         }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
         .main-title {
-            text-align: center;
-            font-size: clamp(2.8rem, 10vw, 4.2rem);
+            text-align: left;
+            font-size: clamp(2.2rem, 6vw, 3.2rem);
             font-weight: 900;
             letter-spacing: 0.04em;
             background: linear-gradient(135deg, #ff9a3c, #ff5e00, #ff2a00, #ff7a00);
@@ -45,10 +53,8 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
             line-height: 1.2;
-            margin-bottom: 4px;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
             animation: shimmerTitle 5s ease-in-out infinite alternate;
         }
@@ -66,11 +72,42 @@
         .title-underline {
             width: 70px;
             height: 3px;
-            margin: 12px auto 30px auto;
-            background: linear-gradient(90deg, transparent, #ff6a00, transparent);
+            margin: 6px 0 30px 0;
+            background: linear-gradient(90deg, #ff6a00, transparent);
             border-radius: 4px;
             opacity: 0.6;
         }
+
+        /* 设置按钮 */
+        .settings-btn {
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #d4c0b0;
+            padding: 6px 10px;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s, transform 0.2s;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .settings-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: scale(1.02);
+        }
+        .settings-btn:active {
+            transform: scale(0.95);
+        }
+        .settings-btn img {
+            width: 1.4em;
+            height: 1.4em;
+            display: block;
+        }
+
+        /* 以下卡片样式不变（省略重复） */
         .packs-grid {
             display: flex;
             flex-direction: column;
@@ -138,6 +175,24 @@
             border-radius: 20px;
             border: 1px solid rgba(255, 140, 40, 0.1);
             text-transform: uppercase;
+        }
+        .type-badge {
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 2px 12px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .type-badge.data {
+            background: rgba(60, 180, 255, 0.15);
+            color: #6ab0e6;
+            border: 1px solid rgba(60, 180, 255, 0.15);
+        }
+        .type-badge.resource {
+            background: rgba(255, 180, 40, 0.15);
+            color: #ffb74d;
+            border: 1px solid rgba(255, 180, 40, 0.15);
         }
         .project-note {
             margin-top: 6px;
@@ -262,6 +317,8 @@
             height: 100%;
             display: block;
         }
+
+        /* 模态框 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -298,7 +355,62 @@
         .modal-overlay.active .modal-box {
             transform: scale(1);
         }
-        .modal-title {
+
+        .settings-modal .modal-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #f0e6d8;
+            text-align: center;
+            margin-bottom: 20px;
+            letter-spacing: 0.02em;
+        }
+        .settings-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .settings-option {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
+            padding: 14px 18px;
+            color: #d4c0b0;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s;
+            text-align: left;
+        }
+        .settings-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 140, 40, 0.2);
+        }
+        .settings-option.selected {
+            background: rgba(255, 140, 40, 0.1);
+            border-color: rgba(255, 140, 40, 0.3);
+            color: #f0e6d8;
+        }
+        .modal-close {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 40px;
+            color: #b8a89a;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+            text-align: center;
+            letter-spacing: 0.02em;
+        }
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: #f0e6d8;
+        }
+
+        .version-modal .modal-title {
             font-size: 1.4rem;
             font-weight: 700;
             color: #f0e6d8;
@@ -310,7 +422,7 @@
             justify-content: center;
             gap: 8px;
         }
-        .modal-title img {
+        .version-modal .modal-title img {
             width: 1.2em;
             height: 1.2em;
             display: inline-block;
@@ -395,25 +507,7 @@
             height: 100%;
             display: block;
         }
-        .modal-close {
-            display: block;
-            width: 100%;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 40px;
-            color: #b8a89a;
-            font-size: 0.95rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
-            text-align: center;
-            letter-spacing: 0.02em;
-        }
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.08);
-            color: #f0e6d8;
-        }
+
         .footer {
             margin-top: 40px;
             text-align: center;
@@ -421,6 +515,7 @@
             color: rgba(255, 200, 160, 0.08);
             letter-spacing: 0.06em;
         }
+
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
             .project-name { font-size: 1.25rem; }
@@ -431,27 +526,50 @@
             .version-item { padding: 10px 12px; }
             .project-note { gap: 6px; }
             .experimental-badge { font-size: 0.7rem; padding: 1px 10px; }
+            .header { flex-wrap: wrap; gap: 8px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1 class="main-title">
-            <img src="assets/main/textures/fire.svg" alt="Fire" class="title-icon" />
-            <span>fire data pack</span>
-        </h1>
+        <div class="header">
+            <h1 class="main-title">
+                <img src="assets/main/textures/fire.svg" alt="Fire" class="title-icon" />
+                <span id="mainTitleText">fire</span>
+            </h1>
+            <!-- 设置按钮：使用动图 settings.gif -->
+            <button class="settings-btn" id="settingsBtn" aria-label="Settings">
+                <img src="assets/main/textures/settings.gif" alt="Settings" />
+            </button>
+        </div>
         <div class="title-underline"></div>
+
         <div class="packs-grid" id="packsGrid"></div>
-        <div class="footer">
-            <span>✦  Made with 🔥  ·  MC Data Pack  ✦</span>
+
+        <div class="footer" id="footerText">
+            <span>fireloader</span>
         </div>
     </div>
 
-    <div class="modal-overlay" id="versionModal">
+    <!-- 设置模态框 -->
+    <div class="modal-overlay settings-modal" id="settingsModal">
+        <div class="modal-box">
+            <div class="modal-title" id="settingsTitle">Language</div>
+            <div class="settings-options" id="settingsOptions">
+                <button class="settings-option" data-lang="en-US">English</button>
+                <button class="settings-option" data-lang="zh-CN">简体中文</button>
+                <button class="settings-option" data-lang="zh-TW">繁體中文</button>
+            </div>
+            <button class="modal-close" id="settingsCloseBtn">Close</button>
+        </div>
+    </div>
+
+    <!-- 版本选择模态框 -->
+    <div class="modal-overlay version-modal" id="versionModal">
         <div class="modal-box">
             <div class="modal-title">
                 <img src="assets/main/textures/package.svg" alt="Package" />
-                Select Version
+                <span id="modalTitleText">Select Version</span>
             </div>
             <div class="version-list" id="versionList"></div>
             <button class="modal-close" id="closeModalBtn">Close</button>
@@ -462,6 +580,122 @@
         (function() {
             'use strict';
 
+            // =============================================================
+            // 1. 语言管理
+            // =============================================================
+            const LANG_FOLDER = 'assets/main/lang/';
+            const SETTINGS_PATH = 'data/main/settings/settings.json';
+
+            let currentLang = 'en-US';
+            let langData = {};
+
+            const defaultLang = {
+                "title": "fire",
+                "selectVersion": "Select Version",
+                "download": "Download",
+                "dataPack": "Data Pack",
+                "resourcePack": "Resource Pack",
+                "experimental": "Experimental",
+                "version": "Version",
+                "close": "Close",
+                "noVersions": "No versions available",
+                "madeWith": "fireloader",
+                "settingsTitle": "Language"
+            };
+
+            async function loadLanguage(langCode) {
+                try {
+                    const res = await fetch(LANG_FOLDER + langCode + '.json');
+                    if (!res.ok) throw new Error('Language file not found');
+                    const data = await res.json();
+                    langData = { ...defaultLang, ...data };
+                } catch (e) {
+                    console.warn('Failed to load language, using default English.', e);
+                    langData = { ...defaultLang };
+                }
+                applyLanguage();
+            }
+
+            function applyLanguage() {
+                document.getElementById('mainTitleText').textContent = langData.title || 'fire';
+                document.getElementById('modalTitleText').textContent = langData.selectVersion || 'Select Version';
+                document.getElementById('closeModalBtn').textContent = langData.close || 'Close';
+                document.getElementById('footerText').innerHTML = langData.madeWith || 'fireloader';
+                document.getElementById('settingsTitle').textContent = langData.settingsTitle || 'Language';
+            }
+
+            async function setLanguage(langCode) {
+                if (langCode === currentLang) return;
+                currentLang = langCode;
+                localStorage.setItem('fire-datapack-lang', langCode);
+                await loadLanguage(langCode);
+                await loadAllPacks();
+                document.querySelectorAll('.settings-option').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.lang === langCode);
+                });
+            }
+
+            async function initLanguage() {
+                let lang = localStorage.getItem('fire-datapack-lang') || 'en-US';
+                try {
+                    const res = await fetch(SETTINGS_PATH);
+                    if (res.ok) {
+                        const settings = await res.json();
+                        if (settings.language) {
+                            lang = settings.language;
+                            localStorage.setItem('fire-datapack-lang', lang);
+                        }
+                    }
+                } catch (e) { /* ignore */ }
+
+                currentLang = lang;
+                await loadLanguage(lang);
+                document.querySelectorAll('.settings-option').forEach(btn => {
+                    btn.classList.toggle('selected', btn.dataset.lang === lang);
+                });
+            }
+
+            // =============================================================
+            // 2. 设置模态框控制
+            // =============================================================
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsModal = document.getElementById('settingsModal');
+            const settingsCloseBtn = document.getElementById('settingsCloseBtn');
+
+            function openSettings() {
+                settingsModal.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
+
+            function closeSettings() {
+                settingsModal.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+
+            settingsBtn.addEventListener('click', openSettings);
+            settingsCloseBtn.addEventListener('click', closeSettings);
+            settingsModal.addEventListener('click', function(e) {
+                if (e.target === settingsModal) closeSettings();
+            });
+
+            document.querySelectorAll('.settings-option').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    setLanguage(lang);
+                    closeSettings();
+                });
+            });
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    if (settingsModal.classList.contains('active')) closeSettings();
+                    if (versionModal.classList.contains('active')) closeModal();
+                }
+            });
+
+            // =============================================================
+            // 3. 数据包 / 资源包 加载
+            // =============================================================
             const PACK_JSON_FILES = [
                 'neovillage.json',
                 'structure_optimization.json'
@@ -476,7 +710,7 @@
             const ICON_CLIP = 'assets/main/textures/clip.svg';
 
             const packsGrid = document.getElementById('packsGrid');
-            const modalOverlay = document.getElementById('versionModal');
+            const versionModal = document.getElementById('versionModal');
             const versionList = document.getElementById('versionList');
             const closeModalBtn = document.getElementById('closeModalBtn');
 
@@ -485,12 +719,17 @@
                 return map[v] || 'Unknown';
             }
 
+            function getPackType(checkCode) {
+                if (checkCode === 1 || checkCode === 48) return 'data';
+                if (checkCode === 0 || checkCode === 24) return 'resource';
+                return null;
+            }
+
             function openModal(packData) {
                 versionList.innerHTML = '';
                 const availableVersions = packData._availableVersions || [];
                 if (availableVersions.length === 0) {
-                    // 极端情况：不会发生，因为只有有版本才打开
-                    versionList.innerHTML = '';
+                    versionList.innerHTML = `<div style="text-align:center;color:#8a7a6a;padding:20px 0;">${langData.noVersions || 'No versions available'}</div>`;
                 } else {
                     availableVersions.forEach(item => {
                         const div = document.createElement('div');
@@ -517,22 +756,19 @@
                         versionList.appendChild(div);
                     });
                 }
-                modalOverlay.classList.add('active');
+                versionModal.classList.add('active');
                 document.body.style.overflow = 'hidden';
             }
 
             function closeModal() {
-                modalOverlay.classList.remove('active');
+                versionModal.classList.remove('active');
                 document.body.style.overflow = '';
             }
 
             if (!window._modalBound) {
                 closeModalBtn.addEventListener('click', closeModal);
-                modalOverlay.addEventListener('click', function(e) {
-                    if (e.target === modalOverlay) closeModal();
-                });
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+                versionModal.addEventListener('click', function(e) {
+                    if (e.target === versionModal) closeModal();
                 });
                 window._modalBound = true;
             }
@@ -542,7 +778,10 @@
                     const res = await fetch(JSON_BASE + jsonFileName);
                     if (!res.ok) return null;
                     const data = await res.json();
-                    if (data.check_code !== 1 && data.check_code !== 48) return null;
+
+                    const checkCode = data.check_code;
+                    const packType = getPackType(checkCode);
+                    if (!packType) return null;
 
                     const name = data.name || 'unknown.zip';
                     const versionType = getVersionType(data.version);
@@ -559,13 +798,15 @@
                     }
                     available.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
 
-                    return { name, versionType, note, verlevel, isExperimental, available };
+                    return { name, versionType, note, verlevel, isExperimental, available, packType };
                 } catch (e) {
                     return null;
                 }
             }
 
             async function loadAllPacks() {
+                packsGrid.innerHTML = '';
+
                 for (const fileName of PACK_JSON_FILES) {
                     const pack = await loadPack(fileName);
                     if (!pack || pack.available.length === 0) continue;
@@ -573,30 +814,35 @@
                     const card = document.createElement('div');
                     card.className = 'project-card';
                     const expClass = pack.isExperimental ? '' : 'hidden';
+
+                    const typeLabel = pack.packType === 'data' ? (langData.dataPack || 'Data Pack') : (langData.resourcePack || 'Resource Pack');
+                    const typeClass = pack.packType === 'data' ? 'data' : 'resource';
+
                     card.innerHTML = `
                         <div class="project-header">
                             <div class="project-icon"><img src="${ICON_PACKAGE}" alt="Package" /></div>
                             <div class="project-name">
                                 <span>${pack.name}</span>
                                 <span class="badge">${pack.versionType}</span>
+                                <span class="type-badge ${typeClass}">${typeLabel}</span>
                             </div>
                         </div>
                         <div class="project-note">
                             <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
                             <span class="note-text">${pack.note}</span>
-                            <span class="version-tag">Version ${pack.verlevel}</span>
-                            <span class="experimental-badge ${expClass}">Experimental</span>
+                            <span class="version-tag">${langData.version || 'Version'} ${pack.verlevel}</span>
+                            <span class="experimental-badge ${expClass}">${langData.experimental || 'Experimental'}</span>
                         </div>
                         <div class="divider"></div>
                         <div class="download-area">
                             <div class="download-info">
                                 <span class="info-icon"><img src="${ICON_CLIP}" alt="Clip" /></span>
-                                <span>Data Pack</span>
+                                <span>${langData.dataPack || 'Data Pack'}</span>
                                 <span class="file-size">~1.2 MB</span>
                             </div>
                             <button class="download-btn" data-pack-name="${pack.name}">
                                 <span class="btn-icon"><img src="${ICON_DOWNLOAD}" alt="Download" /></span>
-                                Download
+                                ${langData.download || 'Download'}
                             </button>
                         </div>
                     `;
@@ -609,10 +855,17 @@
                     card.classList.add('visible');
                     packsGrid.appendChild(card);
                 }
-                // 如果无任何数据包，packsGrid 保持为空（没有任何文字）
             }
 
-            loadAllPacks();
+            // =============================================================
+            // 启动
+            // =============================================================
+            async function init() {
+                await initLanguage();
+                await loadAllPacks();
+            }
+
+            init();
         })();
     </script>
 </body>
