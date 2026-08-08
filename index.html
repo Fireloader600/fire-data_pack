@@ -7,7 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* ===== 全局重置 & 基础样式 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -38,7 +37,6 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== 标题 ===== */
         .main-title {
             text-align: center;
             font-size: clamp(2.8rem, 10vw, 4.2rem);
@@ -72,8 +70,9 @@
             opacity: 0.6;
         }
 
-        /* ===== 项目卡片 ===== */
+        /* 项目卡片 – 默认隐藏，由 JS 控制显示 */
         .project-card {
+            display: none;
             background: rgba(255, 255, 255, 0.04);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
@@ -81,6 +80,10 @@
             border-radius: 24px;
             padding: 30px 28px 24px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        .project-card.visible {
+            display: block;
         }
 
         .project-header {
@@ -139,6 +142,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
         }
 
         .note-icon {
@@ -162,13 +166,21 @@
             color: #d4c0b0;
         }
 
+        .version-tag {
+            background: rgba(255, 100, 50, 0.12);
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: #ffb074;
+            border: 1px solid rgba(255, 100, 50, 0.1);
+        }
+
         .divider {
             margin: 18px 0 22px 0;
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255, 140, 40, 0.12), transparent);
         }
 
-        /* ===== 下载按钮（触发弹窗） ===== */
         .download-area {
             display: flex;
             align-items: center;
@@ -245,9 +257,9 @@
             display: block;
         }
 
-        /* ===== 版本选择模态框 ===== */
+        /* 模态框 */
         .modal-overlay {
-            display: none; /* 默认隐藏 */
+            display: none;
             position: fixed;
             inset: 0;
             background: rgba(0, 0, 0, 0.7);
@@ -296,11 +308,6 @@
             letter-spacing: 0.02em;
         }
 
-        .modal-title .title-emoji {
-            color: #ff7a00;
-            margin-right: 6px;
-        }
-
         .version-list {
             display: flex;
             flex-direction: column;
@@ -314,12 +321,10 @@
         .version-list::-webkit-scrollbar {
             width: 4px;
         }
-
         .version-list::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.03);
             border-radius: 10px;
         }
-
         .version-list::-webkit-scrollbar-thumb {
             background: rgba(255, 140, 40, 0.3);
             border-radius: 10px;
@@ -416,7 +421,6 @@
             color: #f0e6d8;
         }
 
-        /* ===== 底部 ===== */
         .footer {
             margin-top: 30px;
             text-align: center;
@@ -425,7 +429,26 @@
             letter-spacing: 0.06em;
         }
 
-        /* ===== 响应式 ===== */
+        /* 空状态提示（0 个文件可下载） */
+        .empty-state {
+            text-align: center;
+            padding: 16px 0 8px 0;
+            color: #b8a89a;
+            font-size: 0.95rem;
+            letter-spacing: 0.02em;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .empty-state .empty-text {
+            color: #8a7a6a;
+        }
+
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
             .project-name { font-size: 1.25rem; }
@@ -439,48 +462,58 @@
 </head>
 <body>
     <div class="container">
-        <!-- 标题 -->
         <h1 class="main-title">
             <img src="assets/main/textures/fire.svg" alt="Fire" class="title-icon" />
             <span>fire data pack</span>
         </h1>
         <div class="title-underline"></div>
 
-        <!-- 项目卡片 -->
-        <div class="project-card">
-            <div class="project-header">
-                <div class="project-icon">
-                    <img src="assets/main/textures/package.svg" alt="Package" />
+        <!-- 项目卡片 – 默认隐藏，由 JS 控制显示 -->
+        <div class="project-card" id="projectCard">
+            <!-- 正常状态（有文件可下载） -->
+            <div id="normalContent">
+                <div class="project-header">
+                    <div class="project-icon">
+                        <img src="assets/main/textures/package.svg" alt="Package" />
+                    </div>
+                    <div class="project-name">
+                        <span id="projectName">neovillage.zip</span>
+                        <span class="badge" id="versionBadge">Alpha</span>
+                    </div>
                 </div>
-                <div class="project-name">
-                    neovillage.zip
-                    <span class="badge">Alpha 3</span>
+                <div class="project-note">
+                    <span class="note-icon">
+                        <img src="assets/main/textures/pin.svg" alt="Pin" />
+                    </span>
+                    <span class="note-text" id="projectNote">bug fix</span>
+                    <span class="version-tag" id="verlevelTag">等级 3</span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="download-area">
+                    <div class="download-info">
+                        <span class="info-icon">
+                            <img src="assets/main/textures/clip.svg" alt="Clip" />
+                        </span>
+                        <span>Data Pack</span>
+                        <span class="file-size">~1.2 MB</span>
+                    </div>
+                    <button class="download-btn" id="openModalBtn">
+                        <span class="btn-icon">
+                            <img src="assets/main/textures/download.svg" alt="Download" />
+                        </span>
+                        Download
+                    </button>
                 </div>
             </div>
-            <div class="project-note">
-                <span class="note-icon">
-                    <img src="assets/main/textures/pin.svg" alt="Pin" />
-                </span>
-                <span class="note-text">Bug fix</span>
-            </div>
 
-            <div class="divider"></div>
-
-            <!-- 下载区域（按钮触发弹窗） -->
-            <div class="download-area">
-                <div class="download-info">
-                    <span class="info-icon">
-                        <img src="assets/main/textures/clip.svg" alt="Clip" />
-                    </span>
-                    <span>Data Pack</span>
-                    <span class="file-size">~1.2 MB</span>
+            <!-- 空状态（0 个文件可下载） -->
+            <div id="emptyContent" style="display: none;">
+                <div class="empty-state">
+                    <span class="empty-icon">📂</span>
+                    <span class="empty-text">Looks like the files aren't installed yet...</span>
                 </div>
-                <button class="download-btn" id="openModalBtn">
-                    <span class="btn-icon">
-                        <img src="assets/main/textures/download.svg" alt="Download" />
-                    </span>
-                    Download
-                </button>
             </div>
         </div>
 
@@ -489,14 +522,14 @@
         </div>
     </div>
 
-    <!-- ===== 版本选择模态框 ===== -->
+    <!-- 模态框 -->
     <div class="modal-overlay" id="versionModal">
         <div class="modal-box">
             <div class="modal-title">
-                <span class="title-emoji">📦</span> Select Version
+                <span style="color:#ff7a00;">📦</span> Select Version
             </div>
             <div class="version-list" id="versionList">
-                <!-- 由 JavaScript 动态生成 -->
+                <!-- 动态生成 -->
             </div>
             <button class="modal-close" id="closeModalBtn">Close</button>
         </div>
@@ -506,68 +539,47 @@
         (function() {
             'use strict';
 
-            // ---------- 版本数据 ----------
-            // 按版本号从高到低排列（版本号越高，排位越高）
-            const versions = [
-                { version: '1.21.11', file: 'neovillage-1.21.11.zip' },
-                { version: '1.20.1',  file: 'neovillage-1.20.1.zip' }
-            ];
-
-            // 图标路径（复用已有的 SVG）
+            // ========== 配置 ==========
+            const JSON_PATH = 'data/main/file/neovillage.json';
+            const DOWNLOAD_BASE = 'assets/main/download/';
             const ICON_VERSION = 'assets/main/textures/version.svg';
             const ICON_DOWNLOAD = 'assets/main/textures/download.svg';
 
-            // ---------- DOM 引用 ----------
-            const modalOverlay = document.getElementById('versionModal');
+            // ========== DOM 引用 ==========
+            const projectCard = document.getElementById('projectCard');
+            const normalContent = document.getElementById('normalContent');
+            const emptyContent = document.getElementById('emptyContent');
+            const projectName = document.getElementById('projectName');
+            const versionBadge = document.getElementById('versionBadge');
+            const projectNote = document.getElementById('projectNote');
+            const verlevelTag = document.getElementById('verlevelTag');
             const versionList = document.getElementById('versionList');
-            const openBtn = document.getElementById('openModalBtn');
-            const closeBtn = document.getElementById('closeModalBtn');
+            const openModalBtn = document.getElementById('openModalBtn');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalOverlay = document.getElementById('versionModal');
 
-            // ---------- 渲染版本列表 ----------
-            function renderVersions() {
-                versionList.innerHTML = '';
-                versions.forEach(item => {
-                    const div = document.createElement('div');
-                    div.className = 'version-item';
-
-                    // 左：版本图标 + 版本号
-                    const left = document.createElement('div');
-                    left.className = 'version-left';
-                    left.innerHTML = `
-                        <span class="version-icon">
-                            <img src="${ICON_VERSION}" alt="Version" />
-                        </span>
-                        <span class="version-number">${item.version}</span>
-                    `;
-
-                    // 右：下载按钮
-                    const dlBtn = document.createElement('button');
-                    dlBtn.className = 'version-download';
-                    dlBtn.setAttribute('aria-label', `Download version ${item.version}`);
-                    dlBtn.innerHTML = `<img src="${ICON_DOWNLOAD}" alt="Download" />`;
-                    dlBtn.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        // 构造下载 URL（假设所有版本文件放在 assets/main/download_src/ 下）
-                        const url = `assets/main/download_src/${item.file}`;
-                        const a = document.createElement('a');
-                        a.href = url;
-                        a.download = item.file;
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        // 下载后不关闭弹窗，让用户自己关闭
-                    });
-
-                    div.appendChild(left);
-                    div.appendChild(dlBtn);
-                    versionList.appendChild(div);
-                });
+            // ========== 辅助函数 ==========
+            function getVersionType(value) {
+                const map = {
+                    1: 'Alpha',
+                    2: 'Beta',
+                    3: 'Stable Beta',
+                    4: 'Official'
+                };
+                return map[value] || 'Unknown';
             }
 
-            // ---------- 模态框控制 ----------
+            // 检测文件是否存在（使用 HEAD 请求）
+            function fileExists(url) {
+                return fetch(url, { method: 'HEAD' })
+                    .then(res => res.ok)
+                    .catch(() => false);
+            }
+
+            // 显示模态框
             function openModal() {
                 modalOverlay.classList.add('active');
-                document.body.style.overflow = 'hidden'; // 防止滚动
+                document.body.style.overflow = 'hidden';
             }
 
             function closeModal() {
@@ -575,32 +587,126 @@
                 document.body.style.overflow = '';
             }
 
-            // 点击遮罩关闭
-            modalOverlay.addEventListener('click', function(e) {
-                if (e.target === modalOverlay) {
-                    closeModal();
+            // ========== 主逻辑 ==========
+            async function init() {
+                try {
+                    // 1. 加载 JSON
+                    const response = await fetch(JSON_PATH);
+                    if (!response.ok) {
+                        // JSON 不存在或无法读取 → 完全忽略，不显示任何内容
+                        return;
+                    }
+                    const data = await response.json();
+
+                    // 2. 校验 check_code（1 或 48 才有效）
+                    if (data.check_code !== 1 && data.check_code !== 48) {
+                        // 无效校验码 → 忽略
+                        return;
+                    }
+
+                    // 3. 解析数据
+                    const name = data.name || 'neovillage.zip';
+                    const versionType = getVersionType(data.version);
+                    const note = data.note || '';
+                    const verlevel = data.verlevel || 0;
+                    const fileMap = data.file || {};
+                    const minecraftVersions = data.minecraft || [];
+
+                    // 4. 检测每个版本的文件是否存在
+                    const availableVersions = [];
+                    for (const mcVer of minecraftVersions) {
+                        const fileName = fileMap[mcVer];
+                        if (fileName) {
+                            const fullUrl = DOWNLOAD_BASE + fileName + '.zip';
+                            const exists = await fileExists(fullUrl);
+                            if (exists) {
+                                availableVersions.push({
+                                    version: mcVer,
+                                    file: fileName + '.zip'
+                                });
+                            }
+                        }
+                    }
+
+                    // 5. 按版本号从高到低排序
+                    availableVersions.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
+
+                    // 6. 更新 UI
+                    projectName.textContent = name;
+                    versionBadge.textContent = versionType;
+                    projectNote.textContent = note;
+                    verlevelTag.textContent = `等级 ${verlevel}`;
+
+                    if (availableVersions.length === 0) {
+                        // 没有任何文件可下载 → 显示空状态
+                        normalContent.style.display = 'none';
+                        emptyContent.style.display = 'block';
+                        projectCard.classList.add('visible');
+                        return;
+                    }
+
+                    // 有文件可下载 → 显示正常状态
+                    normalContent.style.display = 'block';
+                    emptyContent.style.display = 'none';
+                    projectCard.classList.add('visible');
+
+                    // 渲染版本列表
+                    versionList.innerHTML = '';
+                    availableVersions.forEach(item => {
+                        const div = document.createElement('div');
+                        div.className = 'version-item';
+
+                        const left = document.createElement('div');
+                        left.className = 'version-left';
+                        left.innerHTML = `
+                            <span class="version-icon">
+                                <img src="${ICON_VERSION}" alt="Version" />
+                            </span>
+                            <span class="version-number">${item.version}</span>
+                        `;
+
+                        const dlBtn = document.createElement('button');
+                        dlBtn.className = 'version-download';
+                        dlBtn.setAttribute('aria-label', `Download version ${item.version}`);
+                        dlBtn.innerHTML = `<img src="${ICON_DOWNLOAD}" alt="Download" />`;
+                        dlBtn.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const url = DOWNLOAD_BASE + item.file;
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = item.file;
+                            document.body.appendChild(a);
+                            a.click();
+                            document.body.removeChild(a);
+                        });
+
+                        div.appendChild(left);
+                        div.appendChild(dlBtn);
+                        versionList.appendChild(div);
+                    });
+
+                    // 模态框事件绑定（只绑定一次）
+                    if (!window._modalBound) {
+                        openModalBtn.addEventListener('click', openModal);
+                        closeModalBtn.addEventListener('click', closeModal);
+                        modalOverlay.addEventListener('click', function(e) {
+                            if (e.target === modalOverlay) closeModal();
+                        });
+                        document.addEventListener('keydown', function(e) {
+                            if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
+                        });
+                        window._modalBound = true;
+                    }
+
+                } catch (error) {
+                    // 任何其他错误 → 忽略，不显示任何内容
+                    console.debug('Page initialized with no data pack.');
                 }
-            });
+            }
 
-            // 按钮事件
-            openBtn.addEventListener('click', openModal);
-            closeBtn.addEventListener('click', closeModal);
-
-            // 键盘 ESC 关闭
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
-                    closeModal();
-                }
-            });
-
-            // ---------- 启动 ----------
-            renderVersions();
-
-            // 控制台提示
-            console.log('🔥 fire data pack — 版本选择已加载');
-            console.log('📦 版本列表:', versions.map(v => v.version).join(', '));
+            // ========== 启动 ==========
+            init();
         })();
     </script>
-
 </body>
 </html>
