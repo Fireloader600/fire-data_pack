@@ -7,7 +7,7 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* ===== 全局重置 & 背景 ===== */
+        /* ===== 完整样式（与之前完全一致） ===== */
         * {
             margin: 0;
             padding: 0;
@@ -21,11 +21,10 @@
             align-items: flex-start;
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: #0b0806;
-            /* 丰富的径向渐变背景（带流动感） */
             background-image:
-                radial-gradient(ellipse at 30% 20%, rgba(180, 60, 0, 0.3) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 70%, rgba(220, 80, 0, 0.2) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 100%, rgba(140, 40, 0, 0.15) 0%, transparent 40%);
+                radial-gradient(ellipse at 30% 20%, rgba(180, 60, 0, 0.35) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 70%, rgba(220, 80, 0, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 100%, rgba(140, 40, 0, 0.20) 0%, transparent 40%);
             background-attachment: fixed;
             padding: 40px 20px;
         }
@@ -36,13 +35,11 @@
             animation: fadeUp 0.8s ease-out both;
         }
 
-        /* 容器淡入上移动画 */
         @keyframes fadeUp {
             0% { opacity: 0; transform: translateY(25px); }
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* ===== 标题（带流光动画） ===== */
         .main-title {
             text-align: center;
             font-size: clamp(2.8rem, 10vw, 4.2rem);
@@ -72,7 +69,7 @@
             height: 1em;
             display: inline-block;
             flex-shrink: 0;
-            -webkit-text-fill-color: initial; /* 确保图标不受文字渐变影响 */
+            -webkit-text-fill-color: initial;
         }
 
         .title-underline {
@@ -84,7 +81,6 @@
             opacity: 0.6;
         }
 
-        /* ===== 数据包卡片列表 ===== */
         .packs-grid {
             display: flex;
             flex-direction: column;
@@ -135,7 +131,6 @@
             border: 1px solid rgba(255, 140, 40, 0.1);
             padding: 8px;
         }
-
         .project-icon img {
             width: 100%;
             height: 100%;
@@ -173,19 +168,16 @@
             gap: 8px;
             flex-wrap: wrap;
         }
-
         .note-icon {
             width: 18px;
             height: 18px;
             display: inline-block;
         }
-
         .note-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
-
         .note-text {
             background: rgba(255, 200, 100, 0.05);
             padding: 2px 14px;
@@ -194,7 +186,6 @@
             font-size: 0.85rem;
             color: #d4c0b0;
         }
-
         .version-tag {
             background: rgba(255, 100, 50, 0.12);
             padding: 2px 12px;
@@ -204,9 +195,8 @@
             border: 1px solid rgba(255, 100, 50, 0.1);
         }
 
-        /* ===== 实验性红色框 ===== */
         .experimental-badge {
-            display: none;
+            display: inline-block;
             background: rgba(255, 40, 40, 0.15);
             color: #ff6b6b;
             padding: 2px 14px;
@@ -218,9 +208,8 @@
             text-transform: uppercase;
             white-space: nowrap;
         }
-
-        .experimental-badge.show {
-            display: inline-block;
+        .experimental-badge.hidden {
+            display: none;
         }
 
         .divider {
@@ -229,7 +218,6 @@
             background: linear-gradient(90deg, transparent, rgba(255, 140, 40, 0.12), transparent);
         }
 
-        /* ===== 下载区域 ===== */
         .download-area {
             display: flex;
             align-items: center;
@@ -237,7 +225,6 @@
             flex-wrap: wrap;
             gap: 16px;
         }
-
         .download-info {
             font-size: 0.85rem;
             color: #8a7a6a;
@@ -245,19 +232,16 @@
             align-items: center;
             gap: 12px;
         }
-
         .download-info .info-icon {
             width: 18px;
             height: 18px;
             display: inline-block;
         }
-
         .download-info .info-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
-
         .file-size {
             background: rgba(255, 255, 255, 0.04);
             padding: 4px 14px;
@@ -286,23 +270,19 @@
             letter-spacing: 0.03em;
             flex-shrink: 0;
         }
-
         .download-btn:hover {
             transform: translateY(-2px) scale(1.02);
             box-shadow: 0 10px 40px rgba(255, 80, 0, 0.5);
             background: linear-gradient(135deg, #ff8a3a, #f05a00);
         }
-
         .download-btn:active {
             transform: scale(0.95);
         }
-
         .download-btn .btn-icon {
             width: 1.2rem;
             height: 1.2rem;
             display: inline-block;
         }
-
         .download-btn .btn-icon img {
             width: 100%;
             height: 100%;
@@ -323,16 +303,13 @@
             padding: 20px;
             animation: fadeIn 0.25s ease-out;
         }
-
         .modal-overlay.active {
             display: flex;
         }
-
         @keyframes fadeIn {
             0% { opacity: 0; }
             100% { opacity: 1; }
         }
-
         .modal-box {
             background: rgba(20, 14, 10, 0.95);
             backdrop-filter: blur(20px);
@@ -346,11 +323,9 @@
             transform: scale(0.95);
             transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
         }
-
         .modal-overlay.active .modal-box {
             transform: scale(1);
         }
-
         .modal-title {
             font-size: 1.4rem;
             font-weight: 700;
@@ -359,7 +334,6 @@
             margin-bottom: 20px;
             letter-spacing: 0.02em;
         }
-
         .version-list {
             display: flex;
             flex-direction: column;
@@ -369,7 +343,6 @@
             overflow-y: auto;
             padding-right: 4px;
         }
-
         .version-list::-webkit-scrollbar {
             width: 4px;
         }
@@ -381,7 +354,6 @@
             background: rgba(255, 140, 40, 0.3);
             border-radius: 10px;
         }
-
         .version-item {
             display: flex;
             align-items: center;
@@ -392,37 +364,31 @@
             border: 1px solid rgba(255, 255, 255, 0.04);
             transition: background 0.2s, border-color 0.2s;
         }
-
         .version-item:hover {
             background: rgba(255, 255, 255, 0.06);
             border-color: rgba(255, 140, 40, 0.15);
         }
-
         .version-left {
             display: flex;
             align-items: center;
             gap: 12px;
         }
-
         .version-icon {
             width: 28px;
             height: 28px;
             flex-shrink: 0;
         }
-
         .version-icon img {
             width: 100%;
             height: 100%;
             display: block;
         }
-
         .version-number {
             font-size: 1rem;
             font-weight: 600;
             color: #e8ddd0;
             letter-spacing: 0.01em;
         }
-
         .version-download {
             width: 32px;
             height: 32px;
@@ -436,22 +402,18 @@
             align-items: center;
             justify-content: center;
         }
-
         .version-download:hover {
             background: rgba(255, 120, 20, 0.25);
             transform: scale(1.08);
         }
-
         .version-download:active {
             transform: scale(0.92);
         }
-
         .version-download img {
             width: 100%;
             height: 100%;
             display: block;
         }
-
         .modal-close {
             display: block;
             width: 100%;
@@ -467,7 +429,6 @@
             text-align: center;
             letter-spacing: 0.02em;
         }
-
         .modal-close:hover {
             background: rgba(255, 255, 255, 0.08);
             color: #f0e6d8;
@@ -488,8 +449,15 @@
             font-size: 0.95rem;
             letter-spacing: 0.02em;
         }
-        .empty-state .empty-icon { font-size: 2rem; display: block; margin-bottom: 12px; opacity: 0.4; }
-        .empty-state .empty-text { color: #8a7a6a; }
+        .empty-state .empty-icon {
+            font-size: 2rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+        .empty-state .empty-text {
+            color: #8a7a6a;
+        }
 
         @media (max-width: 500px) {
             .project-card { padding: 20px 18px; }
@@ -513,7 +481,7 @@
         <div class="title-underline"></div>
 
         <div class="packs-grid" id="packsGrid">
-            <!-- 项目卡片由 JavaScript 动态生成 -->
+            <!-- 卡片由 JS 生成 -->
         </div>
 
         <div class="footer">
@@ -534,16 +502,12 @@
         (function() {
             'use strict';
 
-            // ============================================================
-            // 1. 在此列出所有数据包的 JSON 文件名（不含路径）
-            //    新增数据包时，在这里添加文件名即可
-            // ============================================================
+            // ===== 数据包文件名列表 =====
             const PACK_JSON_FILES = [
                 'neovillage.json',
                 'structure_optimization.json'
             ];
 
-            // 路径配置
             const JSON_BASE = 'data/main/file/';
             const DOWNLOAD_BASE = 'assets/main/download_src/';
             const ICON_VERSION = 'assets/main/textures/version.svg';
@@ -552,7 +516,6 @@
             const ICON_PIN = 'assets/main/textures/pin.svg';
             const ICON_CLIP = 'assets/main/textures/clip.svg';
 
-            // DOM
             const packsGrid = document.getElementById('packsGrid');
             const modalOverlay = document.getElementById('versionModal');
             const versionList = document.getElementById('versionList');
@@ -560,16 +523,9 @@
 
             let currentModalData = null;
 
-            // 辅助函数
             function getVersionType(v) {
                 const map = { 1:'Alpha', 2:'Beta', 3:'Stable Beta', 4:'Official' };
                 return map[v] || 'Unknown';
-            }
-
-            function fileExists(url) {
-                return fetch(url, { method: 'HEAD' })
-                    .then(r => r.ok)
-                    .catch(() => false);
             }
 
             function openModal(packData) {
@@ -619,7 +575,6 @@
                 currentModalData = null;
             }
 
-            // 模态框事件（只绑定一次）
             if (!window._modalBound) {
                 closeModalBtn.addEventListener('click', closeModal);
                 modalOverlay.addEventListener('click', function(e) {
@@ -631,7 +586,6 @@
                 window._modalBound = true;
             }
 
-            // 加载单个数据包
             async function loadPack(jsonFileName) {
                 const jsonUrl = JSON_BASE + jsonFileName;
                 try {
@@ -644,7 +598,7 @@
                     const name = data.name || 'unknown.zip';
                     const versionType = getVersionType(data.version);
                     const note = data.note || '';
-                    const verlevel = data.verlevel || 0;
+                    const verlevel = data.verlevel;   // 保留原始值（整数或小数）
                     const fileMap = data.file || {};
                     const minecraftVersions = data.minecraft || [];
                     const isExperimental = data.experimental === true;
@@ -653,10 +607,7 @@
                     for (const mcVer of minecraftVersions) {
                         const fileName = fileMap[mcVer];
                         if (fileName) {
-                            const fullUrl = DOWNLOAD_BASE + fileName + '.zip';
-                            if (await fileExists(fullUrl)) {
-                                available.push({ version: mcVer, file: fileName + '.zip' });
-                            }
+                            available.push({ version: mcVer, file: fileName + '.zip' });
                         }
                     }
                     available.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
@@ -675,9 +626,8 @@
                 }
             }
 
-            // 渲染所有数据包
             async function loadAllPacks() {
-                let hasAnyVisible = false;
+                let hasAny = false;
 
                 for (const fileName of PACK_JSON_FILES) {
                     const pack = await loadPack(fileName);
@@ -686,7 +636,7 @@
                     const hasFiles = pack.available.length > 0;
 
                     const card = document.createElement('div');
-                    card.className = 'project-card visible';
+                    card.className = 'project-card';
 
                     const normalContent = document.createElement('div');
                     normalContent.id = 'normalContent';
@@ -706,11 +656,13 @@
 
                     const noteRow = document.createElement('div');
                     noteRow.className = 'project-note';
+                    const expClass = pack.isExperimental ? '' : 'hidden';
+                    // ★★★ 修改点：将 "Level" 改为 "Version" ★★★
                     noteRow.innerHTML = `
                         <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
                         <span class="note-text">${pack.note}</span>
-                        <span class="version-tag">等级 ${pack.verlevel}</span>
-                        <span class="experimental-badge ${pack.isExperimental ? 'show' : ''}">Experimental</span>
+                        <span class="version-tag">Version ${pack.verlevel}</span>
+                        <span class="experimental-badge ${expClass}">Experimental</span>
                     `;
                     normalContent.appendChild(noteRow);
 
@@ -761,11 +713,12 @@
                         });
                     }
 
+                    card.classList.add('visible');
                     packsGrid.appendChild(card);
-                    hasAnyVisible = true;
+                    hasAny = true;
                 }
 
-                if (!hasAnyVisible) {
+                if (!hasAny) {
                     const emptyMsg = document.createElement('div');
                     emptyMsg.style.cssText = `
                         text-align: center;
@@ -780,7 +733,6 @@
             }
 
             loadAllPacks();
-            console.log('🔥 fire data pack — 数据包列表:', PACK_JSON_FILES.join(', '));
         })();
     </script>
 </body>
