@@ -7,7 +7,6 @@
     <link rel="icon" type="image/svg+xml" href="assets/main/textures/favicon.svg" />
 
     <style>
-        /* ===== 全局样式 ===== */
         * {
             margin: 0;
             padding: 0;
@@ -289,7 +288,6 @@
             display: block;
         }
 
-        /* ===== 模态框 ===== */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -463,16 +461,13 @@
         </h1>
         <div class="title-underline"></div>
 
-        <div class="packs-grid" id="packsGrid">
-            <!-- 卡片由 JavaScript 动态生成 -->
-        </div>
+        <div class="packs-grid" id="packsGrid"></div>
 
         <div class="footer">
             <span>✦  Made with 🔥  ·  MC Data Pack  ✦</span>
         </div>
     </div>
 
-    <!-- 模态框 -->
     <div class="modal-overlay" id="versionModal">
         <div class="modal-box">
             <div class="modal-title"><span style="color:#ff7a00;">📦</span> Select Version</div>
@@ -485,13 +480,13 @@
         (function() {
             'use strict';
 
-            // ===== 数据包文件名列表 =====
+            // ----- 数据包文件名列表（新增时在此添加） -----
             const PACK_JSON_FILES = [
                 'neovillage.json',
                 'structure_optimization.json'
             ];
 
-            // ===== 路径配置 =====
+            // ----- 路径配置 -----
             const JSON_BASE = 'data/main/file/';
             const DOWNLOAD_BASE = 'assets/main/download_src/';
             const ICON_VERSION = 'assets/main/textures/version.svg';
@@ -500,28 +495,22 @@
             const ICON_PIN = 'assets/main/textures/pin.svg';
             const ICON_CLIP = 'assets/main/textures/clip.svg';
 
-            // ===== DOM 引用 =====
+            // ----- DOM -----
             const packsGrid = document.getElementById('packsGrid');
             const modalOverlay = document.getElementById('versionModal');
             const versionList = document.getElementById('versionList');
             const closeModalBtn = document.getElementById('closeModalBtn');
 
-            // ===== 辅助函数 =====
             function getVersionType(v) {
                 const map = { 1:'Alpha', 2:'Beta', 3:'Stable Beta', 4:'Official' };
                 return map[v] || 'Unknown';
             }
 
-            // ===== 模态框控制 =====
             function openModal(packData) {
                 versionList.innerHTML = '';
                 const availableVersions = packData._availableVersions || [];
                 if (availableVersions.length === 0) {
-                    versionList.innerHTML = `
-                        <div style="text-align:center;color:#8a7a6a;padding:20px 0;">
-                            No versions available
-                        </div>
-                    `;
+                    versionList.innerHTML = `<div style="text-align:center;color:#8a7a6a;padding:20px 0;">No versions available</div>`;
                 } else {
                     availableVersions.forEach(item => {
                         const div = document.createElement('div');
@@ -538,9 +527,8 @@
                         const dlBtn = div.querySelector('.version-download');
                         dlBtn.addEventListener('click', function(e) {
                             e.stopPropagation();
-                            const url = DOWNLOAD_BASE + item.file;
                             const a = document.createElement('a');
-                            a.href = url;
+                            a.href = DOWNLOAD_BASE + item.file;
                             a.download = item.file;
                             document.body.appendChild(a);
                             a.click();
@@ -558,26 +546,18 @@
                 document.body.style.overflow = '';
             }
 
-            // 模态框事件（只绑定一次）
             if (!window._modalBound) {
                 closeModalBtn.addEventListener('click', closeModal);
-                modalOverlay.addEventListener('click', function(e) {
-                    if (e.target === modalOverlay) closeModal();
-                });
-                document.addEventListener('keydown', function(e) {
-                    if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal();
-                });
+                modalOverlay.addEventListener('click', function(e) { if (e.target === modalOverlay) closeModal(); });
+                document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && modalOverlay.classList.contains('active')) closeModal(); });
                 window._modalBound = true;
             }
 
-            // ===== 加载单个数据包 =====
             async function loadPack(jsonFileName) {
-                const jsonUrl = JSON_BASE + jsonFileName;
                 try {
-                    const res = await fetch(jsonUrl);
+                    const res = await fetch(JSON_BASE + jsonFileName);
                     if (!res.ok) return null;
                     const data = await res.json();
-
                     if (data.check_code !== 1 && data.check_code !== 48) return null;
 
                     const name = data.name || 'unknown.zip';
@@ -588,128 +568,70 @@
                     const minecraftVersions = data.minecraft || [];
                     const isExperimental = data.experimental === true;
 
-                    // 构建可用版本列表（不检测文件是否存在）
                     const available = [];
                     for (const mcVer of minecraftVersions) {
                         const fileName = fileMap[mcVer];
-                        if (fileName) {
-                            available.push({ version: mcVer, file: fileName + '.zip' });
-                        }
+                        if (fileName) available.push({ version: mcVer, file: fileName + '.zip' });
                     }
                     available.sort((a, b) => b.version.localeCompare(a.version, undefined, { numeric: true }));
 
-                    return {
-                        name,
-                        versionType,
-                        note,
-                        verlevel,
-                        isExperimental,
-                        available,
-                        raw: data
-                    };
-                } catch (e) {
-                    return null;
-                }
+                    return { name, versionType, note, verlevel, isExperimental, available };
+                } catch (e) { return null; }
             }
 
-            // ===== 渲染所有卡片 =====
             async function loadAllPacks() {
                 let hasAny = false;
-
                 for (const fileName of PACK_JSON_FILES) {
                     const pack = await loadPack(fileName);
-                    if (!pack) continue;
+                    if (!pack || pack.available.length === 0) continue; // 无文件则跳过
 
-                    const hasFiles = pack.available.length > 0;
-
-                    // ★ 如果没有文件，直接跳过该卡片，不显示任何内容 ★
-                    if (!hasFiles) continue;
-
-                    // 只有有文件时才创建卡片
                     const card = document.createElement('div');
                     card.className = 'project-card';
-
-                    const normalContent = document.createElement('div');
-                    normalContent.id = 'normalContent';
-
-                    const header = document.createElement('div');
-                    header.className = 'project-header';
-                    header.innerHTML = `
-                        <div class="project-icon">
-                            <img src="${ICON_PACKAGE}" alt="Package" />
-                        </div>
-                        <div class="project-name">
-                            <span>${pack.name}</span>
-                            <span class="badge">${pack.versionType}</span>
-                        </div>
-                    `;
-                    normalContent.appendChild(header);
-
-                    const noteRow = document.createElement('div');
-                    noteRow.className = 'project-note';
                     const expClass = pack.isExperimental ? '' : 'hidden';
-                    noteRow.innerHTML = `
-                        <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
-                        <span class="note-text">${pack.note}</span>
-                        <span class="version-tag">Version ${pack.verlevel}</span>
-                        <span class="experimental-badge ${expClass}">Experimental</span>
-                    `;
-                    normalContent.appendChild(noteRow);
-
-                    const divider = document.createElement('div');
-                    divider.className = 'divider';
-                    normalContent.appendChild(divider);
-
-                    const downloadArea = document.createElement('div');
-                    downloadArea.className = 'download-area';
-                    downloadArea.innerHTML = `
-                        <div class="download-info">
-                            <span class="info-icon"><img src="${ICON_CLIP}" alt="Clip" /></span>
-                            <span>Data Pack</span>
-                            <span class="file-size">~1.2 MB</span>
+                    card.innerHTML = `
+                        <div class="project-header">
+                            <div class="project-icon"><img src="${ICON_PACKAGE}" alt="Package" /></div>
+                            <div class="project-name">
+                                <span>${pack.name}</span>
+                                <span class="badge">${pack.versionType}</span>
+                            </div>
                         </div>
-                        <button class="download-btn" data-pack-name="${pack.name}">
-                            <span class="btn-icon"><img src="${ICON_DOWNLOAD}" alt="Download" /></span>
-                            Download
-                        </button>
+                        <div class="project-note">
+                            <span class="note-icon"><img src="${ICON_PIN}" alt="Pin" /></span>
+                            <span class="note-text">${pack.note}</span>
+                            <span class="version-tag">Version ${pack.verlevel}</span>
+                            <span class="experimental-badge ${expClass}">Experimental</span>
+                        </div>
+                        <div class="divider"></div>
+                        <div class="download-area">
+                            <div class="download-info">
+                                <span class="info-icon"><img src="${ICON_CLIP}" alt="Clip" /></span>
+                                <span>Data Pack</span>
+                                <span class="file-size">~1.2 MB</span>
+                            </div>
+                            <button class="download-btn" data-pack-name="${pack.name}">
+                                <span class="btn-icon"><img src="${ICON_DOWNLOAD}" alt="Download" /></span>
+                                Download
+                            </button>
+                        </div>
                     `;
-                    normalContent.appendChild(downloadArea);
-
-                    card.appendChild(normalContent);
-
-                    // 绑定下载按钮事件
-                    const downloadBtn = card.querySelector('.download-btn');
-                    if (downloadBtn && hasFiles) {
-                        pack._availableVersions = pack.available;
-                        downloadBtn.addEventListener('click', function(e) {
-                            e.preventDefault();
-                            openModal(pack);
-                        });
-                    }
-
+                    const btn = card.querySelector('.download-btn');
+                    pack._availableVersions = pack.available;
+                    btn.addEventListener('click', function(e) { e.preventDefault(); openModal(pack); });
                     card.classList.add('visible');
                     packsGrid.appendChild(card);
                     hasAny = true;
                 }
-
-                // 如果没有加载到任何数据包
                 if (!hasAny) {
                     const emptyMsg = document.createElement('div');
-                    emptyMsg.style.cssText = `
-                        text-align: center;
-                        color: rgba(255, 200, 160, 0.15);
-                        padding: 40px 20px;
-                        font-size: 0.9rem;
-                        letter-spacing: 0.04em;
-                    `;
+                    emptyMsg.style.cssText = 'text-align:center;color:rgba(255,200,160,0.15);padding:40px 20px;font-size:0.9rem;letter-spacing:0.04em;';
                     emptyMsg.textContent = 'No data packs found.';
                     packsGrid.appendChild(emptyMsg);
                 }
             }
 
-            // ===== 启动 =====
             loadAllPacks();
         })();
     </script>
 </body>
-</html>0
+</html>
